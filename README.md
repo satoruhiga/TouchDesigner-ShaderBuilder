@@ -6,7 +6,7 @@
 
 - Easy to use
 - Fully customizable using glsl
-- PBR surpport
+- PBR support
 
 [DEMO: https://www.youtube.com/watch?v=7ko8zgE5q3U](https://www.youtube.com/watch?v=7ko8zgE5q3U)
 
