@@ -115,7 +115,7 @@ if 'pixel_update_alpha' in codeblock:
 		mat.roughness = clamp(mat.roughness, MIN_ROUGHNESS, 1.0);
 		mat.diffuseColor = mat.baseColor.rgb * (1 - mat.metallic);
 
-		float reflectance = clamp(mat.reflectance, 0, 1);
+		float reflectance = clamp(mat.reflectance, 0, 2);
 		reflectance = 0.16 * reflectance * reflectance;
 		mat.f0 = mat.baseColor.rgb * mat.metallic + (reflectance * (1.0 - mat.metallic));
 	}

@@ -188,15 +188,37 @@ vec3 evaluateIBL(int index, const vec3 P, const vec3 V, const vec3 N, const PBRM
 	float mipCount = 1 + floor(log2(max(size.x, size.y)));
 	float mipLevel = saturate(material.perceptualRoughness) * mipCount;
 	vec3 prefilteredColor = textureLod(sTDPrefiltEnvLight2DMaps[index], mapCoord, mipLevel).rgb;
-	prefilteredColor = clamp(prefilteredColor, vec3(0), vec3(6)); // clamp super high intencity jitter
 	prefilteredColor = sRGB_to_linear(prefilteredColor);
 
 	vec2 dfg = texture(sTDBRDFLookup, vec2(NoV, material.perceptualRoughness)).xy;
 
-	vec3 diffuseIrradiance = diffuseIrradiance(LightParams.shCoeffs, R);
-	diffuseIrradiance = sRGB_to_linear(diffuseIrradiance);
+	vec3 diffuse = vec3(0);
 
-	vec3 Fd = diffuseIrradiance * material.diffuseColor * (1 / PI);
+	// diffuse = diffuseIrradiance(LightParams.shCoeffs, R) / 1.5;
+
+	// TODO: IBL diffuse term should be updated more
+	{
+		vec3 diffuseContrib = vec3(0);
+		const float C1 = 0.429043;
+		const float C2 = 0.511664;
+		const float C3 = 0.743125;
+		const float C4 = 0.886227;
+		const float C5 = 0.247708;
+
+		vec3 diffEnvMapCoord = envMapRotate * N;
+		diffuseContrib += C1 * (diffEnvMapCoord.x * diffEnvMapCoord.x - diffEnvMapCoord.y * diffEnvMapCoord.y) *  LightParams.shCoeffs[8].rgb;
+		diffuseContrib += C3 * diffEnvMapCoord.z * diffEnvMapCoord.z *  LightParams.shCoeffs[6].rgb;
+		diffuseContrib += C4 *  LightParams.shCoeffs[0].rgb;
+		diffuseContrib -= C5 *  LightParams.shCoeffs[6].rgb;
+		diffuseContrib += 2.0 * C1 * (diffEnvMapCoord.x * diffEnvMapCoord.y * LightParams.shCoeffs[4].rgb + diffEnvMapCoord.x * diffEnvMapCoord.z * LightParams.shCoeffs[7].rgb + diffEnvMapCoord.y * diffEnvMapCoord.z * LightParams.shCoeffs[5].rgb);
+		diffuseContrib += 2.0 * C2 * (diffEnvMapCoord.x *  LightParams.shCoeffs[3].rgb + diffEnvMapCoord.y *  LightParams.shCoeffs[1].rgb + diffEnvMapCoord.z * LightParams.shCoeffs[2].rgb);
+
+		diffuseContrib /= 1.6;
+
+		diffuse = diffuseContrib;
+	}
+
+	vec3 Fd = diffuse * material.diffuseColor * (1 / PI);
 	vec3 Fr = (dfg.xxx * material.f0 + dfg.yyy) * prefilteredColor;
 	// vec3 Fr = mix(dfg.yyy, dfg.xxx, material.f0) * prefilteredColor;
 	// vec3 Fr = mix(dfg.yyy, dfg.xxx, F) * prefilteredColor;
