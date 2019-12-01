@@ -20,21 +20,21 @@ for x in custom_attributes:
 {%
 if 'global_uniforms' in codeblock:
 	c = codeblock['global_uniforms']
-	for x in c: emit(c[x] + '\n')
+	for x in sorted(c.keys()): emit(c[x] + '\n')
 %}
 
 // global define
 {%
 if 'global_define' in codeblock:
 	c = codeblock['global_define']
-	for x in c: emit(c[x])
+	for x in sorted(c.keys()): emit(c[x])
 %}
 
 // vertex derine
 {%
 if 'vertex_define' in codeblock:
 	c = codeblock['vertex_define']
-	for x in c: emit(c[x])
+	for x in sorted(c.keys()): emit(c[x])
 %}
 
 void main() 
@@ -59,7 +59,7 @@ void main()
 {%
 if 'vertex_update_local' in codeblock:
 	c = codeblock['vertex_update_local']
-	for x in c:
+	for x in sorted(c.keys()):
 		emit(indent('{\n%s\n}\n' % indent(c[x].strip(), 1), 2))
 %}
 	}
@@ -75,7 +75,7 @@ if 'vertex_update_local' in codeblock:
 {%
 if 'vertex_update_world' in codeblock:
 	c = codeblock['vertex_update_world']
-	for x in c:
+	for x in sorted(c.keys()):
 		emit(indent('{\n%s\n}\n' % indent(c[x].strip(), 1), 2))
 %}
 	}

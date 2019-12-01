@@ -23,21 +23,21 @@ out vec4 fragColor;
 {%
 if 'global_uniforms' in codeblock:
 	c = codeblock['global_uniforms']
-	for x in c: emit(c[x] + '\n')
+	for x in sorted(c.keys()): emit(c[x] + '\n')
 %}
 
 // global define
 {%
 if 'global_define' in codeblock:
 	c = codeblock['global_define']
-	for x in c: emit(c[x])
+	for x in sorted(c.keys()): emit(c[x])
 %}
 
 // pixel derine
 {%
 if 'pixel_define' in codeblock:
 	c = codeblock['pixel_define']
-	for x in c: emit(c[x])
+	for x in sorted(c.keys()): emit(c[x])
 %}
 
 void main()
@@ -65,7 +65,7 @@ void main()
 if 'pixel_update_normal' in codeblock:
 	emit(indent('vec3 uvw = vec3(0.0, 0.0, 1);\nvec3 out_uvw = vec3(0.0, 0.0, 1);\n\n', 2));
 	c = codeblock['pixel_update_normal']
-	for x in c:
+	for x in sorted(c.keys()):
 		emit(indent('{\n%s\n}' % indent(c[x].strip(), 1), 2))
 		emit(indent('\nout_uvw = blend_normal(out_uvw, uvw);\n\n', 2))
 
@@ -90,7 +90,7 @@ if 'pixel_update_normal' in codeblock:
 {%
 if 'pixel_update_material' in codeblock:
 	c = codeblock['pixel_update_material']
-	for x in c:
+	for x in sorted(c.keys()):
 		emit(indent('{\n%s\n}' % indent(c[x].strip(), 1), 2))
 %}
 	}
@@ -98,7 +98,7 @@ if 'pixel_update_material' in codeblock:
 {%
 if 'pixel_update_alpha' in codeblock:
 	c = codeblock['pixel_update_alpha']
-	for x in c:
+	for x in sorted(c.keys()):
 		emit(indent('{\n%s\n}' % indent(c[x].strip(), 1), 2))
 %}
 
@@ -134,7 +134,7 @@ if 'pixel_update_alpha' in codeblock:
 {%
 if 'pixel_update_final' in codeblock:
 	c = codeblock['pixel_update_final']
-	for x in c:
+	for x in sorted(c.keys()):
 		emit(indent('{\n%s\n}' % indent(c[x].strip(), 1), 2))
 %}
 
