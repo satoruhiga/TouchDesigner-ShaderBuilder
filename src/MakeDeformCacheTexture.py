@@ -12,28 +12,14 @@ class Node:
 class MakeDeformCacheTexture:
 	def __init__(self, ownerComp):
 		self.ownerComp = ownerComp
-		self.FBX = None
+		self.COMP = None
 		self.BONES_MAT = None
 		self.CAPT_PATH = None
 		self.CAPT_DATA = None
 
 		self.nodes = []
 		self.nodes_dict = {}
-		self.root_node = None
-
-	def findRootNode(self):
-		self.FBX = me.parent().inputs[0].par.parent.eval()
-		
-		path = '%s/%s' % (self.FBX.path, op('CAPT_PATH')[1, 0].val)
-
-		def get_parent(o):
-			if not o.inputCOMPs:
-				return o
-			else:
-				for x in o.inputCOMPs:
-					return get_parent(x)
-
-		return get_parent(op(path))
+		self.ROOT_NODE = None
 
 	def updateNodeList(self, root):
 		nodes = []
@@ -42,7 +28,7 @@ class MakeDeformCacheTexture:
 		def walk_nodes(node, parent):
 			n = Node()
 			n.parent = parent
-			n.name = self.FBX.relativePath(node).strip('./')
+			n.name = self.COMP.relativePath(node).strip('./')
 			n.local_transform = node.localTransform.copy()
 			n.s, n.r, n.t = [list(x) for x in n.local_transform.decompose()]
 			n.world_transform = node.worldTransform.copy()
@@ -106,8 +92,9 @@ class MakeDeformCacheTexture:
 				idx += 1
 
 	def Update(self):
-		self.root_node = self.findRootNode()
-		self.nodes, self.nodes_dict = self.updateNodeList(self.root_node)
+		self.ROOT_NODE = me.parent().par.Rootnode.eval()
+		self.COMP = me.parent().par.Comp.eval()
+		self.nodes, self.nodes_dict = self.updateNodeList(self.ROOT_NODE)
 
 		self.initBonesMatChannels()
 
