@@ -140,6 +140,9 @@ if 'pixel_update_final' in codeblock:
 
 	TDAlphaTest(color.a);
 
+#ifndef LINEAR_COLOR_SPACE
 	color.rgb = pow(color.rgb, vec3(1/2.2));
+#endif
+
 	fragColor = TDOutputSwizzle(color);
 }
