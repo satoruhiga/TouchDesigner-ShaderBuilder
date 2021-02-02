@@ -71,6 +71,15 @@ class MATGenerator:
 			p = o.pars('top%i' % i)[0]
 			p.expr = u['top']
 
+			p = o.pars('top%iextendu' % i)[0]
+			p.val = u['extendu']
+
+			p = o.pars('top%iextendv' % i)[0]
+			p.val = u['extendv']
+
+			p = o.pars('top%iextendw' % i)[0]
+			p.val = u['extendw']
+
 		### blendmode etc
 
 		if ctx.blending:
