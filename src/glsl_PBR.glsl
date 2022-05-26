@@ -2,6 +2,8 @@
 //// from google filament https://github.com/google/filament/
 ////
 
+#include "glsl_TD_BUILD"
+
 #define PI (3.14159265358979)
 #define MIN_ROUGHNESS 0.06
 
@@ -9,7 +11,7 @@ float D_GGX(float roughness, float NoH, const vec3 h) {
     float a = NoH * roughness;
     float k = roughness / ((1.0 - NoH * NoH) + a * a);
     float d = k * k * (1.0 / PI);
-    return clamp(d, 0, 65504.0);
+    return clamp(d, 0.0, 65504.0);
 }
 
 float V_SmithGGXCorrelated(float roughness, float NoV, float NoL) {
@@ -17,13 +19,13 @@ float V_SmithGGXCorrelated(float roughness, float NoV, float NoL) {
     float lambdaV = NoL * sqrt((NoV - a2 * NoV) * NoV + a2);
     float lambdaL = NoV * sqrt((NoL - a2 * NoL) * NoL + a2);
     float v = 0.5 / (lambdaV + lambdaL);
-    return clamp(v, 0, 65504.0);
+    return clamp(v, 0.0, 65504.0);
 }
 
 float V_SmithGGXCorrelated_Fast(float roughness, float NoV, float NoL) {
 	// Hammon 2017, "PBR Diffuse Lighting for GGX+Smith Microsurfaces"
 	float v = 0.5 / mix(2.0 * NoL * NoV, NoL + NoV, roughness);
-	return clamp(v, 0, 65504.0);
+	return clamp(v, 0.0, 65504.0);
 }
 
 // float pow5(float x) {
@@ -194,7 +196,13 @@ vec3 evaluateIBL(int index, const vec3 P, const vec3 V, const vec3 N, const PBRM
 
 	vec3 diffuse = vec3(0);
 
-	// diffuse = diffuseIrradiance(LightParams.shCoeffs, R) / 1.5;
+	// diffuse = diffuseIrradiance(SH_COEFFS, R) / 1.5;
+
+#if TD_BUILD == 2021
+	#define SH_COEFFS LightParams.shCoeffs
+#else
+	#define SH_COEFFS uTDEnvLightBuffers[index].shCoeffs
+#endif
 
 	// TODO: IBL diffuse term should be updated more
 	{
@@ -206,12 +214,12 @@ vec3 evaluateIBL(int index, const vec3 P, const vec3 V, const vec3 N, const PBRM
 		const float C5 = 0.247708;
 
 		vec3 diffEnvMapCoord = envMapRotate * N;
-		diffuseContrib += C1 * (diffEnvMapCoord.x * diffEnvMapCoord.x - diffEnvMapCoord.y * diffEnvMapCoord.y) *  LightParams.shCoeffs[8].rgb;
-		diffuseContrib += C3 * diffEnvMapCoord.z * diffEnvMapCoord.z *  LightParams.shCoeffs[6].rgb;
-		diffuseContrib += C4 *  LightParams.shCoeffs[0].rgb;
-		diffuseContrib -= C5 *  LightParams.shCoeffs[6].rgb;
-		diffuseContrib += 2.0 * C1 * (diffEnvMapCoord.x * diffEnvMapCoord.y * LightParams.shCoeffs[4].rgb + diffEnvMapCoord.x * diffEnvMapCoord.z * LightParams.shCoeffs[7].rgb + diffEnvMapCoord.y * diffEnvMapCoord.z * LightParams.shCoeffs[5].rgb);
-		diffuseContrib += 2.0 * C2 * (diffEnvMapCoord.x *  LightParams.shCoeffs[3].rgb + diffEnvMapCoord.y *  LightParams.shCoeffs[1].rgb + diffEnvMapCoord.z * LightParams.shCoeffs[2].rgb);
+		diffuseContrib += C1 * (diffEnvMapCoord.x * diffEnvMapCoord.x - diffEnvMapCoord.y * diffEnvMapCoord.y) *  SH_COEFFS[8].rgb;
+		diffuseContrib += C3 * diffEnvMapCoord.z * diffEnvMapCoord.z *  SH_COEFFS[6].rgb;
+		diffuseContrib += C4 *  SH_COEFFS[0].rgb;
+		diffuseContrib -= C5 *  SH_COEFFS[6].rgb;
+		diffuseContrib += 2.0 * C1 * (diffEnvMapCoord.x * diffEnvMapCoord.y * SH_COEFFS[4].rgb + diffEnvMapCoord.x * diffEnvMapCoord.z * SH_COEFFS[7].rgb + diffEnvMapCoord.y * diffEnvMapCoord.z * SH_COEFFS[5].rgb);
+		diffuseContrib += 2.0 * C2 * (diffEnvMapCoord.x *  SH_COEFFS[3].rgb + diffEnvMapCoord.y *  SH_COEFFS[1].rgb + diffEnvMapCoord.z * SH_COEFFS[2].rgb);
 
 		diffuseContrib /= 1.6;
 
