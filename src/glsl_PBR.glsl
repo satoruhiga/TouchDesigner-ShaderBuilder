@@ -109,7 +109,7 @@ vec3 evaluateDirectLighting(int index, const vec3 P, const vec3 V, const vec3 N,
 		return vec3(0);
 
 	vec3 lightColor = LightParams.diffuse;
-	float attenuation = 1;
+	float attenuation = TDAttenuateLight(index,length(P - LightParams.position.xyz));
 	vec3 lightVector;
 	vec3 L;
 
@@ -190,7 +190,10 @@ vec3 evaluateIBL(int index, const vec3 P, const vec3 V, const vec3 N, const PBRM
 	float mipCount = 1 + floor(log2(max(size.x, size.y)));
 	float mipLevel = saturate(material.perceptualRoughness) * mipCount;
 	vec3 prefilteredColor = textureLod(sTDPrefiltEnvLight2DMaps[index], mapCoord, mipLevel).rgb;
+
+#ifndef LINEAR_COLOR_SPACE
 	prefilteredColor = sRGB_to_linear(prefilteredColor);
+#endif
 
 	vec2 dfg = texture(sTDBRDFLookup, vec2(NoV, material.perceptualRoughness)).xy;
 

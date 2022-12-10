@@ -4,8 +4,10 @@ float saturate(in float value) {
 	return clamp(value, 0.0, 1.0);
 }
 
-float rand(vec2 co){
-	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+float rand(vec2 p){
+	p  = fract( p*0.3183099+.1 );
+	p *= 17.0;
+	return fract( p.x*p.y*(p.x+p.y) );
 }
 
 float map(float value, float inMin, float inMax, float outMin, float outMax) {

@@ -103,7 +103,7 @@ if 'pixel_update_alpha' in codeblock:
 %}
 
 #if defined(ALPHA_HASHED)
-	if (rand(gl_FragCoord.xy + vec2(uTime.x, 0)) >= geom.Cd.a)
+	if (rand(gl_FragCoord.xy * 2 + vec2(uTime.x, 0)) >= geom.Cd.a)
 		discard;
 	geom.Cd.a = 1;
 #endif
