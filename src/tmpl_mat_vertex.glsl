@@ -82,6 +82,13 @@ if 'vertex_update_world' in codeblock:
 
 	gl_Position = TDWorldToProj(geom.P.xyz);
 
+{%
+if 'vertex_update_final' in codeblock:
+	c = codeblock['vertex_update_final']
+	for x in sorted(c.keys()):
+		emit(indent('{\n%s\n}\n' % indent(c[x].strip(), 1), 2))
+%}
+
 	oGeom.cameraIndex = geom.cameraIndex;
 	oGeom.P = geom.P;
 	oGeom.localP = geom.localP;
