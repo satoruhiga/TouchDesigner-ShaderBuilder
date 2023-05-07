@@ -25,7 +25,8 @@ class MATGenerator:
 
 		ctx['camera_index_type'] = 'int'
 		ctx['geom_def'] = self.eval_template('tmpl_geom_def', ctx)
-		self.OUT_glsl_struct = self.eval_template('tmpl_glsl_struct', ctx)
+		glsl_struct_without_flat = self.eval_template('tmpl_glsl_struct', ctx).replace('flat ', '')
+		self.OUT_glsl_struct = glsl_struct_without_flat
 
 		ctx['camera_index_type'] = 'flat int'
 		ctx['geom_def'] = self.eval_template('tmpl_geom_def', ctx)
