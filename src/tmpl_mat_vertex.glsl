@@ -45,7 +45,7 @@ void main()
 	geom.N = N;
 	geom.localN = N;
 	geom.uv = uv[0].xy;
-	geom.Cd = TDInstanceColor(Cd);
+	geom.Color = TDInstanceColor(Color);
 	geom.cameraIndex = TDCameraIndex();
 
 	// custon attributes
@@ -95,7 +95,7 @@ if 'vertex_update_final' in codeblock:
 	oGeom.N = geom.N;
 	oGeom.localN = geom.localN;
 	oGeom.uv = geom.uv;
-	oGeom.Cd = geom.Cd;
+	oGeom.Color = geom.Color;
 
 	{%
 	for x in custom_attributes:

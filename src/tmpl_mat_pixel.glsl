@@ -48,7 +48,7 @@ void main()
 	geom.N = iGeom.N;
 	geom.localN = iGeom.localN;
 	geom.uv = iGeom.uv;
-	geom.Cd = iGeom.Cd;
+	geom.Color = iGeom.Color;
 	geom.cameraIndex = iGeom.cameraIndex;
 
 	// custon attributes
@@ -77,7 +77,7 @@ if 'pixel_update_normal' in codeblock:
 	
 	// initialize material parameters
 	{
-		mat.baseColor = geom.Cd.rgb;
+		mat.baseColor = geom.Color.rgb;
 		mat.metallic = 0;
 		mat.roughness = 0.5;
 		mat.reflectance = 0.5;
@@ -103,9 +103,9 @@ if 'pixel_update_alpha' in codeblock:
 %}
 
 #if defined(ALPHA_HASHED)
-	if (rand(gl_FragCoord.xy * 2 + vec2(uTime.x, 0)) >= geom.Cd.a)
+	if (rand(gl_FragCoord.xy * 2 + vec2(uTime.x, 0)) >= geom.Color.a)
 		discard;
-	geom.Cd.a = 1;
+	geom.Color.a = 1;
 #endif
 
 	// calclate some parameters
@@ -129,7 +129,7 @@ if 'pixel_update_alpha' in codeblock:
 	vec4 color = vec4(0, 0, 0, 1);
 	color.rgb += evaluatePBR(geom.P, V, geom.N, mat);
 	color.rgb += mat.emission;
-	color.a = geom.Cd.a;
+	color.a = geom.Color.a;
 
 {%
 if 'pixel_update_final' in codeblock:
