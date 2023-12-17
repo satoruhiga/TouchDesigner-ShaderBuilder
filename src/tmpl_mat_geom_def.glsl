@@ -4,7 +4,7 @@
 	vec3 N;
 	vec3 localN;
 	vec2 uv;
-	vec4 Cd;
+	vec4 Color;
 	{% emit(camera_index_type) %} cameraIndex;
 	{%
 	for x in custom_attributes:
